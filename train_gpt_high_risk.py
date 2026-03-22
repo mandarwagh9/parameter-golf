@@ -587,14 +587,9 @@ class SharedPyramidTransformer(nn.Module):
         x = self.tok_emb(input_ids)
         x = F.rms_norm(x, (x.size(-1),))
         x0 = x
-        skips: list[Tensor] = []
 
-        for i in range(self.depth_recurrence):
-            mix = self.skip_weights[i].to(dtype=x.dtype)[None, None, :] if i > 0 else None
-            if mix is not None:
-                x = mix * x
+        for _ in range(self.depth_recurrence):
             x = self._shared_block_forward(x, x0)
-            skips.append(x)
 
         x = self.final_norm(x).reshape(-1, x.size(-1))
         targets = target_ids.reshape(-1)
@@ -629,7 +624,7 @@ class SharedPyramidTransformer(nn.Module):
         k = apply_rotary_emb(k, cos, sin)
         q = q * self.shared_block.q_gain.to(dtype=q.dtype)[None, :, None, None]
         y = F.scaled_dot_product_attention(
-            q, k, v, attn_mask=None, is_causal=True, enable_gqa=(self.shared_block.num_kv_heads != self.shared_block.num_heads),
+            q, k, v, attn_mask=None, is_causal=True,
         )
         y = y.transpose(1, 2).contiguous().reshape(bsz, seqlen, dim)
         return self.shared_block.proj(y)
