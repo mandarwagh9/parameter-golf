@@ -1,0 +1,31 @@
+{
+  "author": "Mandar Wagh",
+  "github_id": "mandarwagh9",
+  "name": "Tuned Baseline: dim=480, 10 layers",
+  "blurb": "Tuned baseline architecture: 10 layers (was 9), dim=480 (was 512), matrix_lr=0.06 (was 0.04), scalar_lr=0.06, warmdown=1500 (was 1200). More depth + higher LRs for faster convergence.",
+  "date": "2026-03-22T00:00:00Z",
+  "architecture": "standard_transformer_tuned",
+  "key_innovations": [
+    "10 layers (was 9) for more depth",
+    "dim=480 (was 512) to fit under 16MB budget",
+    "matrix_lr=0.06 (was 0.04)",
+    "scalar_lr=0.06 (was 0.04)",
+    "warmdown_iters=1500 (was 1200)"
+  ],
+  "config": {
+    "model_dim": 480,
+    "num_layers": 10,
+    "num_heads": 8,
+    "num_kv_heads": 4,
+    "mlp_mult": 2,
+    "vocab_size": 1024,
+    "tie_embeddings": true,
+    "logit_softcap": 30.0,
+    "rope_base": 10000.0,
+    "matrix_lr": 0.06,
+    "scalar_lr": 0.06,
+    "warmdown_iters": 1500
+  },
+  "expected_val_bpb": null,
+  "expected_bytes_total": null
+}
