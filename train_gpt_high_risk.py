@@ -736,7 +736,7 @@ def main() -> None:
         if isinstance(module, CastedLinear):
             module.float()
     restore_low_dim_params_to_fp32(base_model)
-    model: nn.Module = DDP(base_model, device_ids=[local_rank], broadcast_buffers=False) if distributed else base_model
+    model: nn.Module = DDP(base_model, device_ids=[local_rank], broadcast_buffers=False, find_unused_parameters=True) if distributed else base_model
 
     matrix_params = [
         p for name, p in base_model.named_parameters()
