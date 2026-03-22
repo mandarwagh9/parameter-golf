@@ -738,26 +738,15 @@ def main() -> None:
     restore_low_dim_params_to_fp32(base_model)
     model: nn.Module = DDP(base_model, device_ids=[local_rank], broadcast_buffers=False) if distributed else base_model
 
-    block_named_params = []
-    for name, _ in base_model.named_parameters():
-        is_block = name.startswith("shared_block.")
-        is_skip = name.startswith("skip_weights")
-        is_embed = name.startswith("tok_emb")
-        is_head = name.startswith("lm_head")
-        is_control = any(pattern in name for pattern in CONTROL_TENSOR_NAME_PATTERNS)
-        if is_block:
-            block_named_params.append(name)
-
     matrix_params = [
         p for name, p in base_model.named_parameters()
         if p.ndim == 2 and not any(pattern in name for pattern in CONTROL_TENSOR_NAME_PATTERNS)
+        and not name.startswith("tok_emb")
     ]
     scalar_params = [
         p for name, p in base_model.named_parameters()
         if p.ndim < 2 or any(pattern in name for pattern in CONTROL_TENSOR_NAME_PATTERNS)
     ]
-    if base_model.skip_weights.numel() > 0:
-        scalar_params.append(base_model.skip_weights)
     token_lr = args.tied_embed_lr if args.tie_embeddings else args.embed_lr
     optimizer_tok = torch.optim.Adam(
         [{"params": [base_model.tok_emb.weight], "lr": token_lr, "base_lr": token_lr}],
