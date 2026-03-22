@@ -1,0 +1,32 @@
+{
+  "author": "Mandar Wagh",
+  "github_id": "mandarwagh9",
+  "name": "Baseline (dim=512, 9 layers) + Tuned Hyperparameters",
+  "blurb": "Baseline architecture with tuned hyperparameters: matrix_lr=0.06 (was 0.04), scalar_lr=0.06 (was 0.04), tied_embed_lr=0.08 (was 0.05), warmdown=1500 (was 1200). Higher LRs for faster convergence while keeping fast baseline architecture (~43ms/step).",
+  "date": "2026-03-22T00:00:00Z",
+  "architecture": "standard_transformer_baseline_tuned",
+  "key_innovations": [
+    "Baseline architecture: dim=512, 9 layers for fast training (~43ms/step)",
+    "matrix_lr=0.06 (was 0.04)",
+    "scalar_lr=0.06 (was 0.04)",
+    "tied_embed_lr=0.08 (was 0.05)",
+    "warmdown_iters=1500 (was 1200)"
+  ],
+  "config": {
+    "model_dim": 512,
+    "num_layers": 9,
+    "num_heads": 8,
+    "num_kv_heads": 4,
+    "mlp_mult": 2,
+    "vocab_size": 1024,
+    "tie_embeddings": true,
+    "logit_softcap": 30.0,
+    "rope_base": 10000.0,
+    "matrix_lr": 0.06,
+    "scalar_lr": 0.06,
+    "tied_embed_lr": 0.08,
+    "warmdown_iters": 1500
+  },
+  "expected_val_bpb": null,
+  "expected_bytes_total": null
+}
