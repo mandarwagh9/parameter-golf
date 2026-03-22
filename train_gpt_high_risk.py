@@ -625,8 +625,8 @@ class SharedPyramidTransformer(nn.Module):
         q = q * self.shared_block.q_gain.to(dtype=q.dtype)[None, :, None, None]
         if self.shared_block.num_kv_heads < self.shared_block.num_heads:
             repeats = self.shared_block.num_heads // self.shared_block.num_kv_heads
-            k = k.repeat_interleave(int(repeats), dim=1)
-            v = v.repeat_interleave(int(repeats), dim=1)
+            k = k.repeat_interleave(repeats, dim=1)
+            v = v.repeat_interleave(repeats, dim=1)
         y = F.scaled_dot_product_attention(
             q, k, v, attn_mask=None, is_causal=True,
         )
@@ -736,7 +736,8 @@ def main() -> None:
         if isinstance(module, CastedLinear):
             module.float()
     restore_low_dim_params_to_fp32(base_model)
-    model: nn.Module = DDP(base_model, device_ids=[local_rank], broadcast_buffers=False, find_unused_parameters=True, gradient_as_bucket_view=False) if distributed else base_model
+    compiled_model = torch.compile(base_model, dynamic=False, fullgraph=False)
+    model: nn.Module = DDP(base_model, device_ids=[local_rank], broadcast_buffers=False, find_unused_parameters=True) if distributed else base_model
 
     matrix_params = [
         p for name, p in base_model.named_parameters()
