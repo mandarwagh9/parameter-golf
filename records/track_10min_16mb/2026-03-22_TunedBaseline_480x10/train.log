@@ -1,0 +1,13 @@
+train_log for 1-GPU smoke test (val_bpb=1.3872)
+
+NOTE: 1-GPU run was slow (683ms/step) due to GQA torch.compile issue.
+8xH100 expected ~85ms/step effective with DDP, ~7000+ steps in 10 min.
+
+Results from 1-GPU smoke test:
+- val_bpb: 1.3872
+- steps: 879/20000
+- compressed size: 12.1MB
+
+Expected 8xH100 performance with this config:
+- ~7000-14000 steps in 10 min
+- val_bpb: likely 1.22-1.24 range (if speed is restored)
